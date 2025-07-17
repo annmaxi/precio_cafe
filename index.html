@@ -1,0 +1,739 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2822
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 <!DOCTYPE html>\
+<html lang="es" class="scroll-smooth">\
+\
+<head>\
+    <meta charset="UTF-8">\
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">\
+    <!-- Chosen Palette: Calm Harmony -->\
+    <!-- Application Structure Plan: A thematic, dashboard-style SPA. Starts with high-level market data (production, consumption) for context. Prioritizes current coffee prices for market-focused users. Then moves to the process (interactive flowchart for processing methods). Dives into economics (price volatility chart and key factors). Explores the sensory aspect with a 'Flavor Map' radar chart. Includes expanded sections on history, varieties, roasting, and storytelling for general information seekers, with placeholder images. Finally, it provides a practical, interactive 'Barista's Toolkit' for brewing methods. This non-linear, thematic structure is chosen to make complex information digestible and engaging, allowing users to explore topics based on interest rather than a rigid chapter order, with enhanced prominence for market data. -->\
+    <!-- Visualization & Content Choices:\
+        - Global Production: (Goal: Compare) -> Horizontal Bar Chart (Chart.js). Justification: Best for comparing quantities across countries. Confirms NO SVG.\
+        - Global Consumption: (Goal: Inform) -> Big Number Stat Card (HTML/Tailwind). Justification: High impact for a key metric. Confirms NO SVG.\
+        - Processing Methods: (Goal: Organize/Compare) -> Interactive Flowchart Diagram (HTML/Tailwind/JS). Justification: Visualizes a process flow engagingly. Confirms NO SVG/Mermaid.\
+        - Price Forecasts: (Goal: Change) -> Line Chart (Chart.js). Justification: Ideal for showing trends and volatility over time. Confirms NO SVG.\
+        - Flavor Profiles: (Goal: Compare) -> Radar Chart (Chart.js). Justification: Perfect for multi-variable comparison of regional tastes. Confirms NO SVG.\
+        - Brewing Methods: (Goal: Organize/Inform) -> Interactive Cards with buttons (HTML/Tailwind/JS). Justification: User-driven exploration is more engaging than a long static list. Confirms NO SVG.\
+        - Volatility Factors: (Goal: Organize) -> Icon List (HTML/Tailwind). Justification: Visually breaks down complex factors. Confirms NO SVG.\
+        - Current Price: (Goal: Inform) -> Interactive buttons with simulated price display and external links (HTML/Tailwind/JS). Prioritized placement. Justification: Provides direct access to live market data, acknowledging sandbox limitations, and offers a simulated in-app experience. Confirms NO SVG.\
+        - History & Terroir: (Goal: Inform/Organize) -> Text blocks with placeholder image (HTML/Tailwind). Justification: Provides foundational knowledge. Confirms NO SVG.\
+        - Varieties & Cultivation: (Goal: Inform/Organize) -> Text blocks with placeholder image (HTML/Tailwind). Justification: Details on coffee types and growing conditions. Confirms NO SVG.\
+        - Roasting: (Goal: Inform/Organize) -> Text blocks with placeholder image (HTML/Tailwind). Justification: Explains the transformation process. Confirms NO SVG.\
+        - Storytelling: (Goal: Inform/Organize) -> Text blocks with placeholder image (HTML/Tailwind). Justification: Focuses on customer engagement. Confirms NO SVG.\
+    -->\
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->\
+    <title>Precio del Caf\'e9 en Tiempo Real (Simulado) | Gu\'eda de Caf\'e9 de Especialidad para Consultores</title>\
+    <meta name="description"\
+        content="Consulta el precio simulado del caf\'e9 Ar\'e1bica y Robusta al instante. Gu\'eda completa de caf\'e9 de especialidad para baristas y consultores: historia, tueste, preparaci\'f3n y econom\'eda del caf\'e9.">\
+    <script src="https://cdn.tailwindcss.com"></script>\
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>\
+    <link rel="preconnect" href="https://fonts.googleapis.com">\
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">\
+    <style>\
+        body \{\
+            font-family: 'Inter', sans-serif;\
+            background-color: #FDFBF8;\
+            color: #4E443F;\
+        \}\
+\
+        .chart-container \{\
+            position: relative;\
+            width: 100%;\
+            max-width: 700px;\
+            margin-left: auto;\
+            margin-right: auto;\
+            height: 350px;\
+            max-height: 450px;\
+        \}\
+\
+        @media (min-width: 768px) \{\
+            .chart-container \{\
+                height: 400px;\
+                max-height: 500px;\
+            \}\
+        \}\
+\
+        .nav-link \{\
+            transition: color 0.3s ease, border-color 0.3s ease;\
+        \}\
+\
+        .nav-link:hover \{\
+            color: #D3756B;\
+            border-color: #D3756B;\
+        \}\
+\
+        .flowchart-node \{\
+            transition: all 0.3s ease;\
+            border: 2px solid transparent;\
+        \}\
+\
+        .flowchart-node:hover \{\
+            transform: translateY(-5px);\
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);\
+            border-color: #D3756B;\
+        \}\
+\
+        .btn-active \{\
+            background-color: #D3756B !important;\
+            color: white !important;\
+        \}\
+\
+        .price-change-positive \{\
+            color: #28a745;\
+            /* Green */\
+        \}\
+\
+        .price-change-negative \{\
+            color: #dc3545;\
+            /* Red */\
+        \}\
+\
+        .image-placeholder \{\
+            background-color: #F7D1BA;\
+            display: flex;\
+            align-items: center;\
+            justify-content: center;\
+            color: #4E443F;\
+            font-weight: bold;\
+            text-align: center;\
+            border-radius: 0.75rem;\
+            overflow: hidden;\
+        \}\
+    </style>\
+</head>\
+\
+<body class="antialiased">\
+\
+    <header class="bg-white/80 backdrop-blur-lg shadow-sm sticky top-0 z-50">\
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">\
+            <h1 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#D3756B] to-[#4E443F]">\
+                Gu\'eda Interactiva del Caf\'e9</h1>\
+            <div class="hidden md:flex space-x-6">\
+                <a href="#mercado" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Mercado</a>\
+                <a href="#precio-actual" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Precio\
+                    Actual</a>\
+                <a href="#historia" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Historia</a>\
+                <a href="#variedades" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Variedades</a>\
+                <a href="#proceso" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Proceso</a>\
+                <a href="#tueste" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Tueste</a>\
+                <a href="#sabor" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Sabor Regional</a>\
+                <a href="#economia" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Econom\'eda</a>\
+                <a href="#barista" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Barista</a>\
+                <a href="#storytelling" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Venta</a>\
+            </div>\
+        </nav>\
+    </header>\
+\
+    <main class="container mx-auto p-4 md:p-8">\
+\
+        <section id="intro" class="text-center my-12 md:my-16">\
+            <h2 class="text-4xl md:text-6xl font-black mb-4">El Arte y la Ciencia del Caf\'e9 de Especialidad</h2>\
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">Una exploraci\'f3n interactiva del viaje del caf\'e9, desde las\
+                fincas globales hasta la taza. Descubre los datos, tendencias y t\'e9cnicas que definen el caf\'e9 de alta\
+                calidad.</p>\
+        </section>\
+\
+        <section id="precio-actual"\
+            class="mb-20 bg-white rounded-xl shadow-lg p-8 max-w-3xl mx-auto border-4 border-[#D3756B]">\
+            <div class="text-center mb-8">\
+                <h3 class="text-3xl font-bold text-[#D3756B]">Precio Actual del Caf\'e9 (Simulado)</h3>\
+                <p class="text-md text-gray-600 max-w-2xl mx-auto mt-2">Los precios mostrados a continuaci\'f3n son\
+                    **simulados** y se actualizan autom\'e1ticamente cada 15 segundos. Para datos en tiempo real y\
+                    oficiales, por favor, consulta los enlaces a Investing.com.</p>\
+            </div>\
+            <div class="flex flex-wrap justify-center gap-2 md:gap-4 mb-8">\
+                <button class="coffee-price-btn btn-active px-4 py-2 bg-white rounded-full shadow font-semibold transition" data-coffeetype="arabica">Caf\'e9 Ar\'e1bica</button>\
+                <button class="coffee-price-btn px-4 py-2 bg-white rounded-full shadow font-semibold transition" data-coffeetype="robusta">Caf\'e9 Robusta</button>\
+            </div>\
+            <div id="current-price-display" class="text-center">\
+                <!-- Contenido din\'e1mico del precio -->\
+            </div>\
+            <div class="text-center mt-6">\
+                <button id="update-price-manual-btn" class="bg-[#F7D1BA] text-[#4E443F] px-6 py-3 rounded-full font-semibold shadow-md hover:bg-[#E8A39C] transition-colors duration-300">\
+                    Actualizar Precio Ahora\
+                </button>\
+                <p class="text-sm text-gray-500 mt-4">\
+                    Para datos en tiempo real y oficiales, consulta:\
+                    <a href="https://es.investing.com/commodities/arabica-coffee-4-5" target="_blank"\
+                        class="text-[#D3756B] hover:underline">Ar\'e1bica en Investing.com</a> |\
+                    <a href="https://es.investing.com/commodities/london-coffee" target="_blank"\
+                        class="text-[#D3756B] hover:underline">Robusta en Investing.com</a>\
+                </p>\
+            </div>\
+        </section>\
+\
+        <section id="historia" class="mb-20">\
+            <div class="text-center mb-12">\
+                <h3 class="text-3xl font-bold">Un Viaje a los Or\'edgenes: Historia y Terroir</h3>\
+                <p class="text-md text-gray-500 max-w-2xl mx-auto mt-2">Descubre la fascinante historia del caf\'e9, desde\
+                    sus humildes comienzos en Etiop\'eda hasta su expansi\'f3n global, y c\'f3mo el "terroir" moldea su sabor\
+                    \'fanico.</p>\
+            </div>\
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-white rounded-xl shadow-lg p-6">\
+                <div>\
+                    <h4 class="text-xl font-bold mb-3">La Leyenda de Kaldi y la Expansi\'f3n</h4>\
+                    <p class="text-gray-600 mb-4">La historia del caf\'e9 se remonta al siglo X, con la leyenda del pastor\
+                        et\'edope Kaldi, quien descubri\'f3 los efectos energizantes de las cerezas de caf\'e9 en sus cabras.\
+                        Desde Etiop\'eda, el caf\'e9 viaj\'f3 a Yemen, donde los monjes suf\'edes lo adoptaron, y de ah\'ed se extendi\'f3\
+                        por el mundo isl\'e1mico antes de llegar a Europa en el siglo XVII y, finalmente, a Am\'e9rica.</p>\
+                    <h4 class="text-xl font-bold mb-3 mt-6">El Concepto de Terroir</h4>\
+                    <p class="text-gray-600">El "terroir" abarca las condiciones ambientales y pr\'e1cticas agr\'edcolas que\
+                        influyen en el car\'e1cter del caf\'e9. Factores como el clima (temperatura, humedad, lluvias), el\
+                        tipo de suelo (volc\'e1nico, rico en minerales) y la altitud (que afecta la maduraci\'f3n lenta y la\
+                        concentraci\'f3n de az\'facares) son cruciales. Este concepto permite entender por qu\'e9 caf\'e9s de la\
+                        misma variedad, cultivados en diferentes lugares, ofrecen experiencias de sabor distintas.</p>\
+                </div>\
+                <div class="image-placeholder h-64 md:h-96">\
+                    <img src="https://placehold.co/600x400/D3756B/FFFFFF?text=Finca+de+Caf\'e9+en+Etiop\'eda" alt="Finca de caf\'e9 en Etiop\'eda" class="w-full h-full object-cover rounded-md">\
+                </div>\
+            </div>\
+        </section>\
+\
+        <section id="variedades" class="mb-20">\
+            <div class="text-center mb-12">\
+                <h3 class="text-3xl font-bold">Las Estrellas del Cafeto: Variedades y Cultivo</h3>\
+                <p class="text-md text-gray-500 max-w-2xl mx-auto mt-2">Las dos variedades bot\'e1nicas principales,\
+                    Ar\'e1bica y Robusta, definen gran parte del sabor del caf\'e9. Su cultivo requiere condiciones\
+                    espec\'edficas y pr\'e1cticas sostenibles para asegurar la calidad.</p>\
+            </div>\
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-white rounded-xl shadow-lg p-6">\
+                <div class="image-placeholder h-64 md:h-96 order-last md:order-first">\
+                    <img src="https://placehold.co/600x400/E8A39C/4E443F?text=Plantas+de+Caf\'e9+y+Cerezas" alt="Plantas de caf\'e9 y cerezas" class="w-full h-full object-cover rounded-md">\
+                </div>\
+                <div>\
+                    <h4 class="text-xl font-bold mb-3">Ar\'e1bica vs. Robusta</h4>\
+                    <p class="text-gray-600 mb-4">El **Ar\'e1bica** es la base del caf\'e9 de especialidad, ofreciendo sabores\
+                        suaves, dulces y complejos (chocolate, frutas, bayas). Se cultiva en altitudes elevadas para un\
+                        desarrollo lento y concentraci\'f3n de az\'facares. El **Robusta** tiene un sabor m\'e1s fuerte, \'e1spero y\
+                        amargo, con m\'e1s cafe\'edna. Es valorado por su cuerpo y crema en espressos, y es m\'e1s resistente a\
+                        enfermedades.</p>\
+                    <h4 class="text-xl font-bold mb-3 mt-6">Requerimientos de Cultivo</h4>\
+                    <p class="text-gray-600">Las plantas de caf\'e9 Ar\'e1bica son exigentes: prefieren luz brillante\
+                        indirecta, riego equilibrado (suelo h\'famedo pero no encharcado), alta humedad y suelos \'e1cidos,\
+                        profundos y bien drenados. La poda y el abonado regular son esenciales. Las pr\'e1cticas\
+                        sostenibles son clave para la calidad y la viabilidad a largo plazo.</p>\
+                </div>\
+            </div>\
+        </section>\
+\
+        <section id="mercado" class="mb-20">\
+            <div class="text-center mb-12">\
+                <h3 class="text-3xl font-bold">El Mercado Global</h3>\
+                <p class="text-md text-gray-500 max-w-2xl mx-auto mt-2">El caf\'e9 es una de las materias primas m\'e1s\
+                    comercializadas del mundo. Un pu\'f1ado de pa\'edses domina la producci\'f3n, mientras que el consumo global\
+                    sigue alcanzando nuevas cotas, impulsado por mercados emergentes.</p>\
+            </div>\
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">\
+                <div class="bg-white rounded-xl shadow-lg p-6 lg:col-span-2">\
+                    <h4 class="text-xl font-bold text-center mb-1">Top 10 Pa\'edses Productores (2024)</h4>\
+                    <p class="text-center text-sm text-gray-500 mb-4">La producci\'f3n se concentra fuertemente en Brasil y\
+                        Vietnam, cuyas cosechas tienen un impacto masivo en la oferta y los precios a nivel mundial.</p>\
+                    <div class="chart-container h-[400px]">\
+                        <canvas id="topProducersChart"></canvas>\
+                    </div>\
+                </div>\
+                <div\
+                    class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center justify-center text-center h-full">\
+                    <h4 class="text-xl font-bold mb-4">Consumo Global Proyectado</h4>\
+                    <p\
+                        class="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-[#D3756B] to-[#E8A39C]">\
+                        169.4M</p>\
+                    <p class="text-xl text-gray-600">de sacos de 60kg</p>\
+                    <p class="mt-4 text-sm text-gray-500">La demanda para la temporada 2025/26 marca un r\'e9cord,\
+                        mostrando la resistencia y popularidad creciente del caf\'e9 a pesar de la volatilidad de precios.\
+                    </p>\
+                </div>\
+            </div>\
+        </section>\
+\
+        <section id="proceso" class="mb-20">\
+            <div class="text-center mb-12">\
+                <h3 class="text-3xl font-bold">La Alquimia del Procesamiento</h3>\
+                <p class="text-md text-gray-500 max-w-2xl mx-auto mt-2">Tras la cosecha, el m\'e9todo de beneficiado\
+                    transforma la cereza de caf\'e9 y es decisivo para el perfil de sabor final. Cada t\'e9cnica es una\
+                    elecci\'f3n deliberada que moldea la acidez, cuerpo y dulzura de la bebida.</p>\
+            </div>\
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">\
+                <div class="flowchart-node bg-white p-6 rounded-lg shadow-lg">\
+                    <span class="text-4xl">\uc0\u55357 \u56487 </span>\
+                    <h4 class="font-bold text-lg mt-2">Beneficio Lavado</h4>\
+                    <p class="text-sm text-gray-600 mt-2">La pulpa se retira antes del secado. Produce perfiles limpios\
+                        y brillantes, acentuando la acidez y las notas m\'e1s n\'edtidas y delicadas del origen.</p>\
+                </div>\
+                <div class="flowchart-node bg-white p-6 rounded-lg shadow-lg">\
+                    <span class="text-4xl">\uc0\u55356 \u57199 </span>\
+                    <h4 class="font-bold text-lg mt-2">Beneficio Honey</h4>\
+                    <p class="text-sm text-gray-600 mt-2">Se deja parte del muc\'edlago (miel) en el grano durante el\
+                        secado. Ofrece un equilibrio perfecto con dulzura acentuada y acidez moderada.</p>\
+                </div>\
+                <div class="flowchart-node bg-white p-6 rounded-lg shadow-lg">\
+                    <span class="text-4xl">\uc0\u9728 \u65039 </span>\
+                    <h4 class="font-bold text-lg mt-2">Beneficio Natural</h4>\
+                    <p class="text-sm text-gray-600 mt-2">La cereza se seca entera. El grano absorbe los az\'facares del\
+                        fruto, resultando en sabores intensamente afrutados, cuerpo denso y baja acidez.</p>\
+                </div>\
+            </div>\
+        </section>\
+\
+        <section id="tueste" class="mb-20">\
+            <div class="text-center mb-12">\
+                <h3 class="text-3xl font-bold">El Alma del Caf\'e9: El Arte del Tueste</h3>\
+                <p class="text-md text-gray-500 max-w-2xl mx-auto mt-2">El tueste es la transformaci\'f3n m\'e1gica que libera\
+                    m\'e1s de 850 sustancias arom\'e1ticas. Las reacciones de Maillard y Caramelizaci\'f3n, junto con las etapas\
+                    de secado y "cracks", definen el perfil final.</p>\
+            </div>\
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-white rounded-xl shadow-lg p-6">\
+                <div>\
+                    <h4 class="text-xl font-bold mb-3">Reacciones Clave: Maillard y Caramelizaci\'f3n</h4>\
+                    <p class="text-gray-600 mb-4">La **Reacci\'f3n de Maillard** (desde 120\'b0C) entre az\'facares y amino\'e1cidos\
+                        es responsable de la mayor\'eda de los nuevos aromas, sabores y el color marr\'f3n del caf\'e9. La\
+                        **Caramelizaci\'f3n** (desde 160\'b0C) descompone los az\'facares, creando notas dulces y caramelizadas,\
+                        especialmente en tuestes m\'e1s oscuros.</p>\
+                    <h4 class="text-xl font-bold mb-3 mt-6">Etapas del Tueste</h4>\
+                    <ul class="list-disc list-inside text-gray-600 space-y-2">\
+                        <li>**Secado:** El grano pierde humedad, cambiando de verde a amarillo.</li>\
+                        <li>**Primer Crack:** Sonido de "pop" al expandirse el grano, marcando el inicio del desarrollo\
+                            del sabor.</li>\
+                        <li>**Desarrollo:** Fase crucial donde se forman la mayor\'eda de los compuestos de sabor.</li>\
+                        <li>**Segundo Crack:** Sonido m\'e1s suave en tuestes oscuros, indicando mayor degradaci\'f3n y\
+                            liberaci\'f3n de aceites.</li>\
+                    </ul>\
+                </div>\
+                <div class="image-placeholder h-64 md:h-96">\
+                    <img src="https://placehold.co/600x400/F7D1BA/4E443F?text=Tostador+de+Caf\'e9" alt="Tostador de caf\'e9" class="w-full h-full object-cover rounded-md">\
+                </div>\
+            </div>\
+        </section>\
+\
+        <section id="sabor" class="mb-20">\
+            <div class="text-center mb-12">\
+                <h3 class="text-3xl font-bold">El Mapa del Sabor Regional</h3>\
+                <p class="text-md text-gray-500 max-w-2xl mx-auto mt-2">El concepto de "terroir" significa que cada\
+                    regi\'f3n productora imprime una firma sensorial \'fanica en sus granos. Este gr\'e1fico compara los perfiles\
+                    de sabor caracter\'edsticos de cuatro or\'edgenes emblem\'e1ticos.</p>\
+            </div>\
+            <div class="bg-white rounded-xl shadow-lg p-6">\
+                <div class="chart-container h-[400px] md:h-[500px]">\
+                    <canvas id="flavorProfilesChart"></canvas>\
+                </div>\
+            </div>\
+        </section>\
+\
+        <section id="economia" class="mb-20">\
+            <div class="text-center mb-12">\
+                <h3 class="text-3xl font-bold">La Volatilidad de los Precios</h3>\
+                <p class="text-md text-gray-500 max-w-2xl mx-auto mt-2">El precio del caf\'e9 es un complejo baile de\
+                    factores globales. El clima, la log\'edstica y la especulaci\'f3n financiera crean un mercado\
+                    impredecible, con previsiones a menudo divergentes para los pr\'f3ximos a\'f1os.</p>\
+            </div>\
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">\
+                <div class="bg-white rounded-xl shadow-lg p-6 lg:col-span-3">\
+                    <h4 class="text-xl font-bold text-center mb-1">Previsiones del Precio del Ar\'e1bica (2025-26)</h4>\
+                    <p class="text-center text-sm text-gray-500 mb-4">Los analistas muestran un panorama mixto,\
+                        reflejando la incertidumbre sobre la oferta y la demanda futuras.</p>\
+                    <div class="chart-container h-[350px] md:h-[400px]">\
+                        <canvas id="priceForecastChart"></canvas>\
+                    </div>\
+                </div>\
+                <div class="bg-white rounded-xl shadow-lg p-8 lg:col-span-2">\
+                    <h4 class="text-xl font-bold mb-6">Factores Clave en Juego</h4>\
+                    <ul class="space-y-6">\
+                        <li class="flex items-start">\
+                            <span class="text-3xl mr-4">\uc0\u55356 \u57121 \u65039 </span>\
+                            <div>\
+                                <h5 class="font-bold">Clima Extremo</h5>\
+                                <p class="text-sm text-gray-600">Sequ\'edas y heladas en Brasil o Vietnam pueden reducir\
+                                    dr\'e1sticamente la oferta global.</p>\
+                            </div>\
+                        </li>\
+                        <li class="flex items-start">\
+                            <span class="text-3xl mr-4">\uc0\u55357 \u56986 </span>\
+                            <div>\
+                                <h5 class="font-bold">Log\'edstica y Geopol\'edtica</h5>\
+                                <p class="text-sm text-gray-600">Costes de transporte y conflictos en rutas mar\'edtimas\
+                                    a\'f1aden presi\'f3n a los precios.</p>\
+                            </div>\
+                        </li>\
+                        <li class="flex items-start">\
+                            <span class="text-3xl mr-4">\uc0\u55357 \u56520 </span>\
+                            <div>\
+                                <h5 class="font-bold">Demanda Creciente</h5>\
+                                <p class="text-sm text-gray-600">Mercados como China duplican su consumo, ejerciendo\
+                                    presi\'f3n sobre la oferta disponible.</p>\
+                            </div>\
+                        </li>\
+                    </ul>\
+                </div>\
+            </div>\
+        </section>\
+        \
+        <section id="barista" class="mb-20">\
+            <div class="text-center mb-12">\
+                <h3 class="text-3xl font-bold">La Caja de Herramientas del Barista</h3>\
+                <p class="text-md text-gray-500 max-w-2xl mx-auto mt-2">Cada m\'e9todo de preparaci\'f3n extrae un perfil de\
+                    sabor diferente del mismo grano. Explora los par\'e1metros b\'e1sicos para algunos de los m\'e9todos m\'e1s\
+                    populares y descubre c\'f3mo influyen en la taza final.</p>\
+            </div>\
+            <div class="flex flex-wrap justify-center gap-2 md:gap-4 mb-8">\
+                <button class="brewing-method-btn btn-active px-4 py-2 bg-white rounded-full shadow font-semibold transition" data-method="espresso">Espresso</button>\
+                <button class="brewing-method-btn px-4 py-2 bg-white rounded-full shadow font-semibold transition" data-method="v60">Hario V60</button>\
+                <button class="brewing-method-btn px-4 py-2 bg-white rounded-full shadow font-semibold transition" data-method="prensa">Prensa Francesa</button>\
+                <button class="brewing-method-btn px-4 py-2 bg-white rounded-full shadow font-semibold transition" data-method="coldbrew">Cold Brew</button>\
+            </div>\
+            <div id="brewing-details-card"\
+                class="bg-white rounded-xl shadow-lg p-8 max-w-4xl mx-auto transition-all duration-500">\
+\
+            </div>\
+        </section>\
+\
+        <section id="storytelling" class="mb-12">\
+            <div class="text-center mb-12">\
+                <h3 class="text-3xl font-bold">Conectando con el Cliente: Storytelling y Venta</h3>\
+                <p class="text-md text-gray-500 max-w-2xl mx-auto mt-2">El barista moderno es un comunicador y\
+                    prescriptor. Contar la historia del caf\'e9, desde el productor hasta la taza, y personalizar la\
+                    experiencia son claves para generar confianza y fidelidad.</p>\
+            </div>\
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-white rounded-xl shadow-lg p-6">\
+                <div>\
+                    <h4 class="text-xl font-bold mb-3">El Barista como Comunicador</h4>\
+                    <p class="text-gray-600 mb-4">Tu rol va m\'e1s all\'e1 de preparar caf\'e9; eres un embajador. Cada taza de\
+                        caf\'e9 de especialidad es una narrativa de sostenibilidad, trazabilidad y excelencia. Al compartir\
+                        la historia del origen, el cuidado del productor y las pr\'e1cticas sostenibles, no solo justificas\
+                        el precio, sino que creas una conexi\'f3n emocional profunda con el cliente.</p>\
+                    <h4 class="text-xl font-bold mb-3 mt-6">Personalizaci\'f3n y Experiencia</h4>\
+                    <p class="text-gray-600">Los consumidores buscan experiencias a medida. Ofrecer opciones de leche,\
+                        endulzantes, intensidad y temperatura es fundamental. Las cafeter\'edas independientes, al\
+                        centrarse en la narraci\'f3n de historias y la construcci\'f3n de comunidades, pueden ofrecer una\
+                        autenticidad que las grandes cadenas no pueden replicar, fomentando la lealtad y la disposici\'f3n\
+                        a pagar un precio premium.</p>\
+                </div>\
+                <div class="image-placeholder h-64 md:h-96">\
+                    <img src="https://placehold.co/600x400/D3756B/FFFFFF?text=Barista+y+Cliente" alt="Barista interactuando con cliente" class="w-full h-full object-cover rounded-md">\
+                </div>\
+            </div>\
+        </section>\
+\
+    </main>\
+\
+    <footer class="bg-[#4E443F] text-white/70 text-center py-6 mt-16">\
+        <p>Aplicaci\'f3n Interactiva del Caf\'e9 de Especialidad</p>\
+        <p class="text-sm mt-1">Creada a partir del "Ebook de Caf\'e9 Especialidad Profesional".</p>\
+    </footer>\
+\
+    <script>\
+        const chartTooltip = \{\
+            callbacks: \{\
+                title: function(tooltipItems) \{\
+                    const item = tooltipItems[0];\
+                    let label = item.chart.data.labels[item.dataIndex];\
+                    return Array.isArray(label) ? label.join(' ') : label;\
+                \}\
+            \}\
+        \};\
+\
+        const colors = \{\
+            primary: '#D3756B',\
+            secondary: '#E8A39C',\
+            accent: '#F7D1BA',\
+            text: '#4E443F',\
+            bg: '#FDFBF8'\
+        \};\
+\
+        const topProducersData = \{\
+            labels: ['Brasil', 'Vietnam', 'Colombia', 'Indonesia', 'Honduras', 'Etiop\'eda', 'Per\'fa', 'India', 'Guatemala', 'Uganda'],\
+            datasets: [\{\
+                label: 'Producci\'f3n Anual (Millones de Toneladas M\'e9tricas)',\
+                data: [2.68, 1.54, 0.754, 0.669, 0.475, 0.472, 0.346, 0.312, 0.254, 0.209],\
+                backgroundColor: [colors.primary, colors.secondary, colors.accent, colors.primary, colors.secondary, colors.accent, colors.primary, colors.secondary, colors.accent, colors.primary],\
+                borderRadius: 4,\
+            \}]\
+        \};\
+\
+        new Chart(document.getElementById('topProducersChart'), \{\
+            type: 'bar',\
+            data: topProducersData,\
+            options: \{\
+                indexAxis: 'y',\
+                maintainAspectRatio: false,\
+                scales: \{\
+                    x: \{\
+                        beginAtZero: true,\
+                        grid: \{ drawOnChartArea: false \},\
+                        ticks: \{ color: colors.text \}\
+                    \},\
+                    y: \{\
+                        ticks: \{ color: colors.text \}\
+                    \}\
+                \},\
+                plugins: \{\
+                    legend: \{ display: false \},\
+                    tooltip: chartTooltip\
+                \}\
+            \}\
+        \});\
+\
+        const priceForecastData = \{\
+            labels: ['Inicio 2025', 'Med. 2025', 'Fin 2025', 'Med. 2026', 'Fin 2026'],\
+            datasets: [\
+                \{\
+                    label: 'Banco Mundial (Alcista)',\
+                    data: [220, 330, 300, 280, 255],\
+                    borderColor: colors.primary,\
+                    backgroundColor: 'rgba(211, 117, 107, 0.1)',\
+                    fill: true,\
+                    tension: 0.3\
+                \},\
+                \{\
+                    label: 'Reuters (Bajista)',\
+                    data: [220, 190, 170, 160, 154],\
+                    borderColor: colors.secondary,\
+                    backgroundColor: 'rgba(232, 163, 156, 0.1)',\
+                    fill: true,\
+                    tension: 0.3\
+                \}\
+            ]\
+        \};\
+\
+        new Chart(document.getElementById('priceForecastChart'), \{\
+            type: 'line',\
+            data: priceForecastData,\
+            options: \{\
+                 maintainAspectRatio: false,\
+                 scales: \{\
+                    y: \{\
+                        title: \{ display: true, text: 'Precio (USD/libra)', color: colors.text \},\
+                        ticks: \{ color: colors.text \}\
+                    \},\
+                    x: \{ ticks: \{ color: colors.text \} \}\
+                 \},\
+                plugins: \{\
+                    legend: \{ labels: \{ color: colors.text \} \},\
+                    tooltip: chartTooltip\
+                \}\
+            \}\
+        \});\
+\
+        const flavorProfilesData = \{\
+            labels: ['Acidez', 'Cuerpo', 'Dulzura', 'Notas Florales', 'Notas Frutales', 'Chocolate/Nuez'],\
+            datasets: [\{\
+                label: 'Etiop\'eda (Lavado)',\
+                data: [9, 4, 7, 9, 8, 3],\
+                borderColor: colors.primary,\
+                backgroundColor: 'rgba(211, 117, 107, 0.2)',\
+            \}, \{\
+                label: 'Colombia (Lavado)',\
+                data: [7, 7, 7, 3, 6, 8],\
+                borderColor: colors.secondary,\
+                backgroundColor: 'rgba(232, 163, 156, 0.2)',\
+            \}, \{\
+                label: 'Brasil (Natural)',\
+                data: [3, 8, 8, 1, 4, 9],\
+                borderColor: colors.accent,\
+                backgroundColor: 'rgba(247, 209, 186, 0.2)',\
+            \},\
+            \{\
+                label: 'Kenia (Lavado)',\
+                data: [10, 7, 6, 2, 9, 2],\
+                borderColor: '#A8D8B9',\
+                backgroundColor: 'rgba(168, 216, 185, 0.2)',\
+            \}]\
+        \};\
+\
+        new Chart(document.getElementById('flavorProfilesChart'), \{\
+            type: 'radar',\
+            data: flavorProfilesData,\
+            options: \{\
+                maintainAspectRatio: false,\
+                scales: \{\
+                    r: \{\
+                        angleLines: \{ color: 'rgba(0,0,0,0.1)' \},\
+                        grid: \{ color: 'rgba(0,0,0,0.1)' \},\
+                        suggestedMin: 0,\
+                        suggestedMax: 10,\
+                        pointLabels: \{\
+                            font: \{ size: 12 \},\
+                            color: colors.text\
+                        \},\
+                        ticks: \{\
+                            color: colors.text,\
+                            backdropColor: colors.bg,\
+                            stepSize: 2\
+                        \}\
+                    \}\
+                \},\
+                plugins: \{\
+                    legend: \{ labels: \{ color: colors.text \} \},\
+                    tooltip: chartTooltip\
+                \}\
+            \}\
+        \});\
+        \
+        const brewingData = \{\
+            espresso: \{\
+                icon: '\uc0\u9749 ',\
+                title: 'Espresso',\
+                description: 'Un m\'e9todo de alta presi\'f3n que resulta en una bebida corta, intensa y concentrada con una capa de crema caracter\'edstica. Es la base de muchas otras bebidas de caf\'e9.',\
+                grind: 'Fina',\
+                ratio: '1:2 a 1:3',\
+                temp: '90-96\'b0C'\
+            \},\
+            v60: \{\
+                icon: '\uc0\u55357 \u56487 ',\
+                title: 'Hario V60',\
+                description: 'Un m\'e9todo de goteo (pour-over) que utiliza un filtro de papel c\'f3nico. Permite un gran control y produce una taza excepcionalmente limpia, clara y brillante, resaltando la acidez.',\
+                grind: 'Media',\
+                ratio: '1:16',\
+                temp: '96-98\'b0C'\
+            \},\
+            prensa: \{\
+                icon: '\uc0\u9203 ',\
+                title: 'Prensa Francesa',\
+                description: 'Un m\'e9todo de inmersi\'f3n total. El caf\'e9 se infusiona directamente en el agua antes de ser separado por un \'e9mbolo. Produce una taza con cuerpo completo y textura rica.',\
+                grind: 'Gruesa',\
+                ratio: '1:16',\
+                temp: '92-96\'b0C'\
+            \},\
+            coldbrew: \{\
+                icon: '\uc0\u55358 \u56778 ',\
+                title: 'Cold Brew',\
+                description: 'Infusi\'f3n en fr\'edo durante 12-24 horas. El resultado es un concentrado suave, de baja acidez y dulzor natural, perfecto para tomar en fr\'edo solo o con hielo y leche.',\
+                grind: 'Gruesa',\
+                ratio: '1:10',\
+                temp: 'Fr\'eda'\
+            \}\
+        \};\
+\
+        const brewingCard = document.getElementById('brewing-details-card');\
+        const brewingBtns = document.querySelectorAll('.brewing-method-btn');\
+\
+        function updateBrewingCard(methodKey) \{\
+            const data = brewingData[methodKey];\
+            brewingCard.innerHTML = `\
+                <div class="flex flex-col md:flex-row items-center gap-8">\
+                    <div class="text-6xl md:text-8xl">$\{data.icon\}</div>\
+                    <div class="flex-1 text-center md:text-left">\
+                        <h4 class="text-2xl font-bold">$\{data.title\}</h4>\
+                        <p class="text-gray-600 mt-2">$\{data.description\}</p>\
+                        <div class="mt-6 flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-4">\
+                            <div>\
+                                <p class="text-sm text-gray-500">Molienda</p>\
+                                <p class="font-bold text-lg">$\{data.grind\}</p>\
+                            </div>\
+                            <div>\
+                                <p class="text-sm text-gray-500">Ratio Caf\'e9:Agua</p>\
+                                <p class="font-bold text-lg">$\{data.ratio\}</p>\
+                            </div>\
+                            <div>\
+                                <p class="text-sm text-gray-500">Temperatura</p>\
+                                <p class="font-bold text-lg">$\{data.temp\}</p>\
+                            </div>\
+                        </div>\
+                    </div>\
+                </div>\
+            `;\
+        \}\
+\
+        brewingBtns.forEach(btn => \{\
+            btn.addEventListener('click', () => \{\
+                brewingBtns.forEach(b => b.classList.remove('btn-active'));\
+                btn.classList.add('btn-active');\
+                updateBrewingCard(btn.dataset.method);\
+            \});\
+        \});\
+\
+        // Initial load\
+        updateBrewingCard('espresso');\
+\
+        const currentPriceData = \{\
+            arabica: \{\
+                title: 'Precio de Futuros del Caf\'e9 Ar\'e1bica (USD/libra)',\
+                currentPrice: 289.60,\
+                lastUpdate: new Date().toLocaleString('es-ES'),\
+                change: 0.00\
+            \},\
+            robusta: \{\
+                title: 'Precio de Futuros del Caf\'e9 Robusta (USD/tonelada)',\
+                currentPrice: 3569.00,\
+                lastUpdate: new Date().toLocaleString('es-ES'),\
+                change: 0.00\
+            \}\
+        \};\
+\
+        let currentActivePriceType = 'arabica';\
+        const priceDisplayCard = document.getElementById('current-price-display');\
+        const priceBtns = document.querySelectorAll('.coffee-price-btn');\
+        const updatePriceManualBtn = document.getElementById('update-price-manual-btn');\
+\
+        function formatPrice(price) \{\
+            return price.toFixed(2).replace('.', ',');\
+        \}\
+\
+        function formatChange(change) \{\
+            const sign = change >= 0 ? '+' : '';\
+            const className = change >= 0 ? 'price-change-positive' : 'price-change-negative';\
+            return `<span class="$\{className\}">$\{sign\}$\{formatPrice(change)\}</span>`;\
+        \}\
+\
+        function updatePriceDisplayContent() \{\
+            const data = currentPriceData[currentActivePriceType];\
+            priceDisplayCard.innerHTML = `\
+                <h4 class="text-xl font-bold mb-2">$\{data.title\}</h4>\
+                <p class="text-6xl font-black text-[#4E443F] mb-2">$$\{formatPrice(data.currentPrice)\}</p>\
+                <p class="text-lg text-gray-600 mb-4">Cambio: $\{formatChange(data.change)\}</p>\
+                <p class="text-sm text-gray-500">\'daltima actualizaci\'f3n (simulada): $\{data.lastUpdate\}</p>\
+            `;\
+        \}\
+\
+        function simulatePriceChange() \{\
+            let data = currentPriceData[currentActivePriceType];\
+            const oldPrice = data.currentPrice;\
+            // Generate a small random fluctuation based on coffee type\
+            let fluctuation = (Math.random() * 2 - 1) * (currentActivePriceType === 'arabica' ? 0.50 : 15.00); // Larger fluctuation for Robusta (per ton)\
+            let newPrice = oldPrice + fluctuation;\
+            \
+            // Ensure price doesn't go too low for realism\
+            if (currentActivePriceType === 'arabica' && newPrice < 250) newPrice = 250 + Math.random() * 10;\
+            if (currentActivePriceType === 'robusta' && newPrice < 3000) newPrice = 3000 + Math.random() * 50;\
+\
+            newPrice = parseFloat(newPrice.toFixed(2));\
+\
+            data.change = newPrice - oldPrice;\
+            data.currentPrice = newPrice;\
+            data.lastUpdate = new Date().toLocaleString('es-ES');\
+            updatePriceDisplayContent();\
+        \}\
+\
+        priceBtns.forEach(btn => \{\
+            btn.addEventListener('click', () => \{\
+                priceBtns.forEach(b => b.classList.remove('btn-active'));\
+                btn.classList.add('btn-active');\
+                currentActivePriceType = btn.dataset.coffeetype;\
+                updatePriceDisplayContent(); // Update immediately on type change\
+                // Also trigger a simulated change for the newly selected type\
+                simulatePriceChange();\
+            \});\
+        \});\
+\
+        updatePriceManualBtn.addEventListener('click', () => \{\
+            simulatePriceChange();\
+        \});\
+\
+        // Initial load for current price section\
+        updatePriceDisplayContent();\
+        simulatePriceChange(); // Initial simulated change\
+\
+        // Automatic update every 15 seconds\
+        setInterval(simulatePriceChange, 15000);\
+        \
+    </script>\
+</body>\
+\
+</html>\
+}
